@@ -1,0 +1,12 @@
+// =============================================================================
+// Formatting helper: Bar Color
+// Used by bar charts / contribution table (conditional formatting → Field value).
+// Coral when the current category is at/above the population stroke rate; teal below.
+// =============================================================================
+
+Bar Color =
+IF (
+    [Stroke Rate] >= [Stroke Rate (Baseline)],
+    "#E4572E",
+    "#0E7C86"
+)

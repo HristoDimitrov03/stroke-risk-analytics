@@ -1,0 +1,169 @@
+// =============================================================================
+// Core DAX Measure Library
+// Model: FactStrokeAssessment + Dim* star schema
+// =============================================================================
+
+
+// -----------------------------------------------------------------------------
+// A) BASE COUNTS
+// Format: Whole number | 0 decimal places
+// -----------------------------------------------------------------------------
+
+Patient Count =
+COUNTROWS ( FactStrokeAssessment )
+
+Stroke Count =
+CALCULATE (
+    COUNTROWS ( FactStrokeAssessment ),
+    FactStrokeAssessment[StrokeFlag] = 1
+)
+
+Non Stroke Count =
+CALCULATE (
+    COUNTROWS ( FactStrokeAssessment ),
+    FactStrokeAssessment[StrokeFlag] = 0
+)
+
+Missing BMI Patient Count =
+CALCULATE (
+    COUNTROWS ( FactStrokeAssessment ),
+    FactStrokeAssessment[BMIIsMissing] = 1
+)
+
+
+// -----------------------------------------------------------------------------
+// B) RATES (use these instead of raw counts on charts)
+// Format: Percentage | 2 decimal places
+// -----------------------------------------------------------------------------
+
+Stroke Rate =
+DIVIDE (
+    [Stroke Count],
+    [Patient Count]
+)
+
+// Stroke rate when BMI was missing in the source data (DQ + clinical signal)
+Missing BMI Stroke Rate =
+CALCULATE (
+    [Stroke Rate],
+    FactStrokeAssessment[BMIIsMissing] = 1
+)
+
+// Stroke rate when BMI was present
+Known BMI Stroke Rate =
+CALCULATE (
+    [Stroke Rate],
+    FactStrokeAssessment[BMIIsMissing] = 0
+)
+
+
+// -----------------------------------------------------------------------------
+// C) BASELINE + RELATIVE RISK (interview-level DAX)
+// Baseline = overall population rate, ignoring visual filters on dims/fact
+// Relative Risk > 1 means higher risk than overall population
+// Format: Stroke Rate (Baseline) = Percentage 2 dp
+// Format: Relative Risk = Decimal number | 2 decimal places
+// -----------------------------------------------------------------------------
+
+Stroke Rate (Baseline) =
+CALCULATE (
+    [Stroke Rate],
+    REMOVEFILTERS ()
+)
+
+Relative Risk =
+DIVIDE (
+    [Stroke Rate],
+    [Stroke Rate (Baseline)]
+)
+
+// Absolute gap vs baseline (e.g. 0.03 = 3 percentage points higher)
+// Format: Percentage | 2 decimal places
+Stroke Rate vs Baseline =
+[Stroke Rate] - [Stroke Rate (Baseline)]
+
+
+// -----------------------------------------------------------------------------
+// D) CONTRIBUTION / CONCENTRATION
+// "% of All Strokes" answers: of every stroke in the dataset, what share
+// sits in the current filter context (age band, clinical profile, etc.)?
+// Format: Percentage | 1 decimal place
+// -----------------------------------------------------------------------------
+
+% of All Strokes =
+DIVIDE (
+    [Stroke Count],
+    CALCULATE (
+        [Stroke Count],
+        REMOVEFILTERS ()
+    )
+)
+
+% of All Patients =
+DIVIDE (
+    [Patient Count],
+    CALCULATE (
+        [Patient Count],
+        REMOVEFILTERS ()
+    )
+)
+
+
+// -----------------------------------------------------------------------------
+// E) CUMULATIVE RISK (uses RiskFactorCount from the cleaning layer)
+// Format: counts = whole number; rates = percentage 2 dp
+// -----------------------------------------------------------------------------
+
+High Risk Patient Count =
+CALCULATE (
+    COUNTROWS ( FactStrokeAssessment ),
+    FactStrokeAssessment[RiskFactorCount] >= 3
+)
+
+High Risk Stroke Count =
+CALCULATE (
+    [Stroke Count],
+    FactStrokeAssessment[RiskFactorCount] >= 3
+)
+
+High Risk Stroke Rate =
+CALCULATE (
+    [Stroke Rate],
+    FactStrokeAssessment[RiskFactorCount] >= 3
+)
+
+% of Strokes in High Risk =
+DIVIDE (
+    [High Risk Stroke Count],
+    CALCULATE (
+        [Stroke Count],
+        REMOVEFILTERS ()
+    )
+)
+
+
+// -----------------------------------------------------------------------------
+// F) CLINICAL AVERAGES (optional cards / context)
+// Format: Decimal number | 1 decimal place
+// -----------------------------------------------------------------------------
+
+Avg Age =
+AVERAGE ( FactStrokeAssessment[Age] )
+
+Avg Glucose =
+AVERAGE ( FactStrokeAssessment[AvgGlucoseLevel] )
+
+Avg BMI (Imputed) =
+AVERAGE ( FactStrokeAssessment[BMIImputed] )
+
+
+// -----------------------------------------------------------------------------
+// G) LABEL MEASURES (nice for dashboard titles / cards)
+// Format: Text
+// -----------------------------------------------------------------------------
+
+Stroke Rate Label =
+FORMAT ( [Stroke Rate], "0.00%" )
+
+Relative Risk Label =
+"RR " & FORMAT ( [Relative Risk], "0.00" )

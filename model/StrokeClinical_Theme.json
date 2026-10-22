@@ -1,0 +1,87 @@
+{
+  "name": "Stroke Clinical",
+  "dataColors": [
+    "#0E7C86",
+    "#E4572E",
+    "#14233C",
+    "#F2A541",
+    "#7A8B99",
+    "#5DA9B0",
+    "#B5523B",
+    "#9AA5B1"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#1F2A37",
+  "tableAccent": "#0E7C86",
+  "good": "#0E7C86",
+  "bad": "#E4572E",
+  "neutral": "#7A8B99",
+  "textClasses": {
+    "callout": {
+      "fontSize": 28,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#14233C"
+    },
+    "title": {
+      "fontSize": 13,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#14233C"
+    },
+    "header": {
+      "fontSize": 11,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#14233C"
+    },
+    "label": {
+      "fontSize": 11,
+      "fontFace": "Segoe UI",
+      "color": "#334155"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [
+          {
+            "show": true,
+            "color": { "solid": { "color": "#FFFFFF" } },
+            "transparency": 0
+          }
+        ],
+        "border": [
+          {
+            "show": true,
+            "color": { "solid": { "color": "#E3E8EF" } },
+            "radius": 8
+          }
+        ],
+        "dropShadow": [
+          { "show": false }
+        ],
+        "title": [
+          {
+            "show": true,
+            "fontColor": { "solid": { "color": "#14233C" } },
+            "fontSize": 13,
+            "fontFamily": "Segoe UI Semibold"
+          }
+        ]
+      }
+    },
+    "page": {
+      "*": {
+        "background": [
+          {
+            "color": { "solid": { "color": "#F3F5F8" } },
+            "transparency": 0
+          }
+        ],
+        "outspace": [
+          {
+            "color": { "solid": { "color": "#E9EDF2" } }
+          }
+        ]
+      }
+    }
+  }
+}

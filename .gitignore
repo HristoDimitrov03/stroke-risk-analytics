@@ -1,0 +1,25 @@
+# Power BI local / cache
+*.pbix.bak
+*.tmp
+~$*
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS / IDE
+.idea/
+.vscode/
+*.swp
+
+# Archives
+*.zip
+*.rar
+
+# Local build notes (not part of the public portfolio)
+docs/sprints/
+docs/mockups/

@@ -1,4 +1,4 @@
-# Stroke Risk Analytics — Power BI Portfolio Project
+# Stroke Risk Analytics — Power BI Project
 
 End-to-end healthcare analytics project: **data quality → Power Query → star schema → DAX → interactive dashboard**.
 
